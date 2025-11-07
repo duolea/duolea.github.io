@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>表白弹窗</title>
+    <title>❄️</title>
     <style>
         * {
             margin: 0;
@@ -12,379 +12,294 @@
         }
 
         body {
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            height: 100vh;
             overflow: hidden;
-            position: relative;
-        }
-
-        .popup {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px);
-            padding: 20px 30px;
-            border-radius: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            z-index: 1000;
-            animation: popupAnimation 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            background: #000;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            max-width: 300px;
-            text-align: center;
-            line-height: 1.6;
+            user-select: none;
         }
 
-        @keyframes popupAnimation {
-            0% {
-                transform: scale(0) rotate(180deg);
+        /* 主画布 */
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* 中心文字 */
+        .center-text {
+            position: absolute;
+            font-size: 4em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            z-index: 10;
+            opacity: 0;
+            animation: fadeInScale 2s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 粒子爆炸效果 */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* 心形粒子 */
+        .heart-particle {
+            position: absolute;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 5;
+            animation: floatUp 2s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            to {
+                transform: translateY(-100vh) rotate(360deg);
                 opacity: 0;
             }
-            50% {
-                transform: scale(1.1) rotate(10deg);
-            }
-            100% {
-                transform: scale(1) rotate(0deg);
-                opacity: 1;
-            }
         }
 
-        .popup::before {
-            content: '❤️';
+        /* 互动提示 */
+        .hint {
             position: absolute;
-            top: -15px;
-            right: -15px;
+            bottom: 50px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1em;
+            z-index: 10;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* 霓虹效果 */
+        .neon-text {
+            position: absolute;
+            font-size: 2em;
+            color: #fff;
+            text-shadow: 
+                0 0 10px #fff,
+                0 0 20px #fff,
+                0 0 30px #ff006e,
+                0 0 40px #ff006e,
+                0 0 50px #ff006e;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* 音符动画 */
+        .music-note {
+            position: absolute;
             font-size: 24px;
-            animation: float 2s ease-in-out infinite;
-            filter: drop-shadow(0 0 5px rgba(255, 107, 107, 0.8));
+            animation: musicFloat 3s ease-out forwards;
+            z-index: 5;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) scale(1); }
-            50% { transform: translateY(-10px) scale(1.1); }
-        }
-
-        .final-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            padding: 50px;
-            border-radius: 25px;
-            text-align: center;
-            z-index: 1001;
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
-            display: none;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .final-message h1 {
-            color: #ffffff;
-            margin-bottom: 25px;
-            font-size: 42px;
-            text-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
-            letter-spacing: 2px;
-        }
-
-        .final-message p {
-            font-size: 20px;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 35px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        }
-
-        .yes-button, .no-button {
-            border: none;
-            padding: 18px 35px;
-            font-size: 20px;
-            border-radius: 30px;
-            cursor: pointer;
-            margin: 0 15px;
-            transition: all 0.3s ease;
-            font-weight: bold;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .yes-button {
-            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-            color: white;
-            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
-        }
-
-        .yes-button:hover {
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
-        }
-
-        .no-button {
-            background: linear-gradient(45deg, #a0a0a0, #c0c0c0);
-            color: white;
-            box-shadow: 0 5px 20px rgba(160, 160, 160, 0.4);
-        }
-
-        .no-button:hover {
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 8px 25px rgba(160, 160, 160, 0.6);
-        }
-
-        .yes-button::after, .no-button::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: rgba(255, 255, 255, 0.1);
-            transform: rotate(30deg);
-            transition: all 0.6s ease;
-        }
-
-        .yes-button:hover::after, .no-button:hover::after {
-            transform: rotate(30deg) translate(20%, 20%);
+        @keyframes musicFloat {
+            to {
+                transform: translateY(-200px) translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="final-message" id="finalMessage">
-        <h1>我爱你！</h1>
-        <p>愿意做我的女朋友吗？</p>
-        <button class="yes-button" onclick="sayYes()">我愿意 ❤️</button>
-        <button class="no-button" id="noButton" onclick="moveButton()">不愿意</button>
-    </div>
+    <canvas id="canvas"></canvas>
+    <div class="center-text">冬至快乐</div>
+    <div class="hint">点击屏幕 ✨</div>
 
     <script>
-        const loveMessages = [
-            "遇见你，是我最美的意外",
-            "你的笑容，是我每天最期待的风景",
-            "有你在的地方，就是我的心之所向",
-            "我想把世界上最好的都给你",
-            "你是我心中最特别的存在",
-            "和你在一起的每一刻都很珍贵",
-            "你让我相信了命中注定",
-            "你的声音是我听过最动听的旋律",
-            "我愿意陪你走过每一个春夏秋冬",
-            "你是我生命中最美好的遇见",
-            "想你，是我每天必做的功课",
-            "你让我的世界变得更加精彩",
-            "我愿意用一生来守护你的笑容",
-            "你是我心中永远的阳光",
-            "和你在一起的时光总是那么短暂",
-            "你让我明白了什么是心动",
-            "你的存在就是我最大的幸福",
-            "我愿意为你做任何事",
-            "你是我今生最美的相遇",
-            "我爱你，比昨天多一点，比明天少一点"
-        ];
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-        const colors = [
-            '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57',
-            '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43',
-            '#a55eea', '#26de81', '#fd79a8', '#fdcb6e', '#6c5ce7'
-        ];
-
-        let currentPopup = 0;
-        let popups = [];
-        let isPopupActive = true;
-
-        function getRandomPosition() {
-            const margin = 50;
-            const maxX = window.innerWidth - 300 - margin;
-            const maxY = window.innerHeight - 120 - margin;
-            const x = margin + Math.random() * maxX;
-            const y = margin + Math.random() * maxY;
-            return { x, y };
-        }
-
-        function getRandomColor() {
-            return colors[Math.floor(Math.random() * colors.length)];
-        }
-
-        function getRandomMessage() {
-            return loveMessages[Math.floor(Math.random() * loveMessages.length)];
-        }
-
-        function createPopup() {
-            if (!isPopupActive || currentPopup >= loveMessages.length) {
-                setTimeout(showFinalMessage, 1000);
-                return;
+        // 粒子系统
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 5 + 1;
+                this.speedX = Math.random() * 6 - 3;
+                this.speedY = Math.random() * 6 - 3;
+                this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                this.life = 100;
             }
 
-            const popup = document.createElement('div');
-            popup.className = 'popup';
-            popup.style.backgroundColor = getRandomColor();
-            popup.style.color = 'white';
-            
-            const position = getRandomPosition();
-            popup.style.left = position.x + 'px';
-            popup.style.top = position.y + 'px';
-            
-            popup.textContent = loveMessages[currentPopup];
-            currentPopup++;
-            
-            popup.onclick = function() {
-                if (isPopupActive) {
-                    createPopup();
-                }
-            };
-            
-            document.body.appendChild(popup);
-            popups.push(popup);
-            
-            // 每隔2秒自动创建下一个弹窗
-            if (currentPopup < loveMessages.length) {
-                setTimeout(createPopup, 200);
-            } else {
-                setTimeout(showFinalMessage, 3000);
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life -= 2;
+                this.speedX *= 0.98;
+                this.speedY *= 0.98;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.life / 100;
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
             }
         }
 
-        function showFinalMessage() {
-            isPopupActive = false;
-            document.getElementById('finalMessage').style.display = 'block';
+        let particles = [];
+        let mouseX = 0;
+        let mouseY = 0;
+
+        // 鼠标移动轨迹
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            for (let i = 0; i < 3; i++) {
+                particles.push(new Particle(mouseX, mouseY));
+            }
+        });
+
+        // 点击爆炸效果
+        document.addEventListener('click', (e) => {
+            createExplosion(e.clientX, e.clientY);
+            createHearts(e.clientX, e.clientY);
+            showNeonText(e.clientX, e.clientY);
+            createMusicNotes(e.clientX, e.clientY);
+        });
+
+        function createExplosion(x, y) {
+            for (let i = 0; i < 50; i++) {
+                const particle = new Particle(x, y);
+                particle.speedX = Math.random() * 15 - 7.5;
+                particle.speedY = Math.random() * 15 - 7.5;
+                particles.push(particle);
+            }
         }
 
-        function sayYes() {
-            // 清除所有弹窗
-            popups.forEach(popup => {
-                if (popup.parentNode) {
-                    popup.remove();
-                }
+        function createHearts(x, y) {
+            const hearts = ['❤️', '💕', '💖', '💗', '💝'];
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart-particle';
+                    heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+                    heart.style.left = x + (Math.random() - 0.5) * 100 + 'px';
+                    heart.style.top = y + 'px';
+                    document.body.appendChild(heart);
+                    
+                    setTimeout(() => heart.remove(), 2000);
+                }, i * 50);
+            }
+        }
+
+        function showNeonText(x, y) {
+            const texts = [
+    '想你了',
+    'MUAH~',
+    '超爱你',
+    '心动💓',
+    '我的宝',
+    '要抱抱',
+    '亲一个',
+    '想见你',
+    '超甜的',
+    '在一起',
+    '好想你',
+    '心动的',
+    '我的爱',
+    '超可愛',
+    '想黏你'
+];
+
+            const text = document.createElement('div');
+            text.className = 'neon-text';
+            text.textContent = texts[Math.floor(Math.random() * texts.length)];
+            text.style.left = x - 50 + 'px';
+            text.style.top = y - 30 + 'px';
+            text.style.opacity = '1';
+            document.body.appendChild(text);
+            
+            setTimeout(() => {
+                text.style.transition = 'opacity 1s';
+                text.style.opacity = '0';
+                setTimeout(() => text.remove(), 1000);
+            }, 1000);
+        }
+
+        function createMusicNotes(x, y) {
+            const notes = ['♪', '♫', '♬', '♩'];
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const note = document.createElement('div');
+                    note.className = 'music-note';
+                    note.innerHTML = notes[Math.floor(Math.random() * notes.length)];
+                    note.style.left = x + (Math.random() - 0.5) * 50 + 'px';
+                    note.style.top = y + 'px';
+                    note.style.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                    document.body.appendChild(note);
+                    
+                    setTimeout(() => note.remove(), 3000);
+                }, i * 100);
+            }
+        }
+
+        // 动画循环
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            particles = particles.filter(particle => {
+                particle.update();
+                particle.draw();
+                return particle.life > 0;
             });
             
-            // 显示成功消息
-            const successMsg = document.createElement('div');
-            successMsg.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(255, 255, 255, 0.15);
-                backdrop-filter: blur(15px);
-                color: white;
-                padding: 50px;
-                border-radius: 25px;
-                font-size: 32px;
-                font-weight: bold;
-                z-index: 2000;
-                text-align: center;
-                animation: popupAnimation 0.8s ease;
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
-                text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
-                max-width: 80%;
-                line-height: 1.8;
-            `;
-            successMsg.innerHTML = `
-                <div style="margin-bottom: 25px;">🎉 太好了！ 🎉</div>
-                <div style="font-size: 24px; margin-bottom: 15px;">我会让你成为世界上最幸福的人！</div>
-                <div style="font-size: 20px;">❤️ 我爱你一生一世 ❤️</div>
-            `;
-            
-            document.body.appendChild(successMsg);
-            
-            // 3秒后关闭
-            setTimeout(() => {
-                if (successMsg.parentNode) {
-                    successMsg.remove();
-                }
-                // 可以选择重置页面或保持现状
-                // resetPage();
-            }, 3000);
+            requestAnimationFrame(animate);
         }
 
-        function moveButton() {
-            const button = document.getElementById('noButton');
-            const margin = 50;
-            const maxX = window.innerWidth - 150 - margin;
-            const maxY = window.innerHeight - 50 - margin;
-            const x = margin + Math.random() * maxX;
-            const y = margin + Math.random() * maxY;
-            
-            button.style.position = 'fixed';
-            button.style.left = x + 'px';
-            button.style.top = y + 'px';
-            button.style.transition = 'all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55)';
-            
-            // 添加点击效果
-            button.style.transform = 'scale(0.9)';
-            setTimeout(() => {
-                button.style.transform = 'scale(1)';
-            }, 200);
-        }
-
-        function resetPage() {
-            currentPopup = 0;
-            isPopupActive = true;
-            popups = [];
-            document.getElementById('finalMessage').style.display = 'none';
-            
-            // 清除所有弹窗
-            const existingPopups = document.querySelectorAll('.popup');
-            existingPopups.forEach(popup => popup.remove());
-            
-            // 重新开始
-            setTimeout(createPopup, 1000);
-        }
-
-        // 页面加载完成后自动开始
-        window.onload = function() {
-            setTimeout(createPopup, 800);
-        };
-
-        // 防止右键菜单
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
+        // 窗口大小调整
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         });
 
-        // 防止F12
-        document.addEventListener('keydown', function(e) {
-            if(e.keyCode === 123) {
-                e.preventDefault();
-            }
-        });
+        // 启动动画
+        animate();
 
-        // 添加页面点击效果
-        document.addEventListener('click', function(e) {
-            if (isPopupActive && e.target === document.body) {
-                // 创建点击波纹效果
-                const ripple = document.createElement('div');
-                ripple.style.cssText = `
-                    position: fixed;
-                    left: ${e.clientX - 50}px;
-                    top: ${e.clientY - 50}px;
-                    width: 100px;
-                    height: 100px;
-                    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-                    border-radius: 50%;
-                    pointer-events: none;
-                    animation: ripple 0.8s ease-out;
-                    z-index: 9999;
-                `;
-                
-                const style = document.createElement('style');
-                style.textContent = `
-                    @keyframes ripple {
-                        0% { transform: scale(0); opacity: 1; }
-                        100% { transform: scale(3); opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(style);
-                document.body.appendChild(ripple);
-                
-                setTimeout(() => {
-                    ripple.remove();
-                    style.remove();
-                }, 800);
-            }
-        });
+        // 初始爆炸效果
+        setTimeout(() => {
+            createExplosion(canvas.width / 2, canvas.height / 2);
+        }, 1000);
     </script>
 </body>
 </html>
