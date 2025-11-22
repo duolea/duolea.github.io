@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神秘礼物</title>
+    <title>答案之书 - 寻找你的答案</title>
     <style>
         * {
             margin: 0;
@@ -12,295 +12,377 @@
         }
 
         body {
-            overflow: hidden;
-            background: #000;
-            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+        }
+
+        .title {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .book-container {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            margin: 0 auto;
             cursor: pointer;
-            user-select: none;
+            transition: transform 0.3s ease;
         }
 
-        /* 主画布 */
-        #canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1;
+        .book-container:hover {
+            transform: scale(1.05);
         }
 
-        /* 中心文字 */
-        .center-text {
+        .book {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .book-cover {
             position: absolute;
-            font-size: 4em;
-            font-weight: bold;
-            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            z-index: 10;
-            opacity: 0;
-            animation: fadeInScale 2s ease-out forwards;
-            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #8B4513, #A0522D);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backface-visibility: hidden;
         }
 
-        @keyframes fadeInScale {
+        .book-cover::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 2px solid #DAA520;
+            border-radius: 5px;
+        }
+
+        .book-title {
+            color: #DAA520;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 1rem;
+        }
+
+        .book-subtitle {
+            color: #F5DEB3;
+            font-size: 1rem;
+            font-style: italic;
+        }
+
+        .book-page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #F5F5DC;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backface-visibility: hidden;
+            transform: rotateY(180deg);
+            padding: 2rem;
+        }
+
+        .page-header {
+            color: #8B4513;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            font-weight: bold;
+        }
+
+        .answer-text {
+            color: #2F4F4F;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            max-width: 250px;
+            word-wrap: break-word;
+        }
+
+        .page-number {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            color: #8B4513;
+            font-size: 0.9rem;
+        }
+
+        .instructions {
+            color: white;
+            font-size: 1.1rem;
+            margin-top: 2rem;
+            opacity: 0.8;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        .flip-animation {
+            animation: bookFlip 1.5s ease-in-out;
+        }
+
+        @keyframes bookFlip {
+            0% { transform: rotateY(0deg); }
+            50% { transform: rotateY(90deg); }
+            100% { transform: rotateY(180deg); }
+        }
+
+        @keyframes fadeInDown {
             from {
                 opacity: 0;
-                transform: scale(0.5);
+                transform: translateY(-30px);
             }
             to {
                 opacity: 1;
-                transform: scale(1);
+                transform: translateY(0);
             }
         }
 
-        /* 粒子爆炸效果 */
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #fff;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        /* 心形粒子 */
-        .heart-particle {
-            position: absolute;
-            font-size: 20px;
-            pointer-events: none;
-            z-index: 5;
-            animation: floatUp 2s ease-out forwards;
-        }
-
-        @keyframes floatUp {
-            to {
-                transform: translateY(-100vh) rotate(360deg);
+        @keyframes fadeInUp {
+            from {
                 opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
-        /* 互动提示 */
-        .hint {
-            position: absolute;
-            bottom: 50px;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 1em;
-            z-index: 10;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-
-        /* 霓虹效果 */
-        .neon-text {
-            position: absolute;
-            font-size: 2em;
-            color: #fff;
-            text-shadow: 
-                0 0 10px #fff,
-                0 0 20px #fff,
-                0 0 30px #ff006e,
-                0 0 40px #ff006e,
-                0 0 50px #ff006e;
-            z-index: 10;
+        .reset-btn {
+            margin-top: 2rem;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
             opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .reset-btn.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reset-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
         }
 
-        /* 音符动画 */
-        .music-note {
+        .star {
             position: absolute;
-            font-size: 24px;
-            animation: musicFloat 3s ease-out forwards;
-            z-index: 5;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
         }
 
-        @keyframes musicFloat {
-            to {
-                transform: translateY(-200px) translateX(50px) rotate(360deg);
-                opacity: 0;
-            }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-    <div class="center-text">立冬</div>
-    <div class="hint">点击屏幕 ✨</div>
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <h1 class="title">答案之书</h1>
+        
+        <div class="book-container" id="bookContainer">
+            <div class="book" id="book">
+                <div class="book-cover">
+                    <div class="book-title">答案之书</div>
+                    <div class="book-subtitle">Book of Answers</div>
+                </div>
+                <div class="book-page">
+                    <div class="page-header">你的答案是：</div>
+                    <div class="answer-text" id="answerText">点击书本寻找答案</div>
+                    <div class="page-number" id="pageNumber">第1页</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions" id="instructions">点击书本获取你的答案</div>
+        <button class="reset-btn" id="resetBtn">再问一次</button>
+    </div>
 
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        // 答案列表 - 包含各种类型的答案
+        const answers = [
+            "是",
+            "否",
+            "也许",
+            "毫无疑问",
+            "前景不明",
+            "需要等待",
+            "现在不是时候",
+            "绝对可以",
+            "再考虑一下",
+            "相信你的直觉",
+            "时机已到",
+            "保持耐心",
+            "立即行动",
+            "暂缓执行",
+            "会有更好的机会",
+            "这是正确的选择",
+            "需要更多信息",
+            "听从内心的声音",
+            "结果会令你满意",
+            "谨慎行事",
+            "放手去做",
+            "还有未预料的变数",
+            "成功在望",
+            "需要更多努力",
+            "顺其自然",
+            "改变计划",
+            "坚持原计划",
+            "会有贵人相助",
+            "独立思考",
+            "征求他人意见",
+            "这是命中注定的",
+            "创造自己的命运",
+            "相信奇迹",
+            "现实一点",
+            "梦想会实现",
+            "需要更多时间",
+            "很快就会有答案",
+            "不要放弃",
+            "尝试新方法",
+            "保持现状",
+            "突破舒适区"
+        ];
 
-        // 粒子系统
-        class Particle {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.size = Math.random() * 5 + 1;
-                this.speedX = Math.random() * 6 - 3;
-                this.speedY = Math.random() * 6 - 3;
-                this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                this.life = 100;
-            }
+        let isFlipped = false;
+        let isAnimating = false;
 
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.life -= 2;
-                this.speedX *= 0.98;
-                this.speedY *= 0.98;
-            }
-
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.life / 100;
-                ctx.fillStyle = this.color;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-
-        let particles = [];
-        let mouseX = 0;
-        let mouseY = 0;
-
-        // 鼠标移动轨迹
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
+        // 创建星星背景
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const numberOfStars = 50;
             
-            for (let i = 0; i < 3; i++) {
-                particles.push(new Particle(mouseX, mouseY));
-            }
-        });
-
-        // 点击爆炸效果
-        document.addEventListener('click', (e) => {
-            createExplosion(e.clientX, e.clientY);
-            createHearts(e.clientX, e.clientY);
-            showNeonText(e.clientX, e.clientY);
-            createMusicNotes(e.clientX, e.clientY);
-        });
-
-        function createExplosion(x, y) {
-            for (let i = 0; i < 50; i++) {
-                const particle = new Particle(x, y);
-                particle.speedX = Math.random() * 15 - 7.5;
-                particle.speedY = Math.random() * 15 - 7.5;
-                particles.push(particle);
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
             }
         }
 
-        function createHearts(x, y) {
-            const hearts = ['❤️', '💕', '💖', '💗', '💝'];
-            for (let i = 0; i < 10; i++) {
-                setTimeout(() => {
-                    const heart = document.createElement('div');
-                    heart.className = 'heart-particle';
-                    heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
-                    heart.style.left = x + (Math.random() - 0.5) * 100 + 'px';
-                    heart.style.top = y + 'px';
-                    document.body.appendChild(heart);
-                    
-                    setTimeout(() => heart.remove(), 2000);
-                }, i * 50);
-            }
+        // 获取随机答案
+        function getRandomAnswer() {
+            const randomIndex = Math.floor(Math.random() * answers.length);
+            return {
+                text: answers[randomIndex],
+                page: randomIndex + 1
+            };
         }
 
-        function showNeonText(x, y) {
-            const texts = [
-    '想你了',
-    'MUAH~',
-    '超爱你',
-    '心动💓',
-    '我的宝',
-    '要抱抱',
-    '亲一个',
-    '想见你',
-    '超甜的',
-    '在一起',
-    '好想你',
-    '心动的',
-    '我的爱',
-    '超可愛',
-    '想黏你'
-];
-
-            const text = document.createElement('div');
-            text.className = 'neon-text';
-            text.textContent = texts[Math.floor(Math.random() * texts.length)];
-            text.style.left = x - 50 + 'px';
-            text.style.top = y - 30 + 'px';
-            text.style.opacity = '1';
-            document.body.appendChild(text);
+        // 翻转书本动画
+        function flipBook() {
+            if (isAnimating) return;
             
+            isAnimating = true;
+            const book = document.getElementById('book');
+            const answerText = document.getElementById('answerText');
+            const pageNumber = document.getElementById('pageNumber');
+            const instructions = document.getElementById('instructions');
+            const resetBtn = document.getElementById('resetBtn');
+            
+            // 添加翻转动画类
+            book.classList.add('flip-animation');
+            
+            // 在动画中间更换内容
             setTimeout(() => {
-                text.style.transition = 'opacity 1s';
-                text.style.opacity = '0';
-                setTimeout(() => text.remove(), 1000);
-            }, 1000);
+                const answer = getRandomAnswer();
+                answerText.textContent = answer.text;
+                pageNumber.textContent = `第${answer.page}页`;
+            }, 750);
+            
+            // 动画完成后
+            setTimeout(() => {
+                isFlipped = true;
+                instructions.style.opacity = '0';
+                resetBtn.classList.add('show');
+                isAnimating = false;
+            }, 1500);
         }
 
-        function createMusicNotes(x, y) {
-            const notes = ['♪', '♫', '♬', '♩'];
-            for (let i = 0; i < 5; i++) {
-                setTimeout(() => {
-                    const note = document.createElement('div');
-                    note.className = 'music-note';
-                    note.innerHTML = notes[Math.floor(Math.random() * notes.length)];
-                    note.style.left = x + (Math.random() - 0.5) * 50 + 'px';
-                    note.style.top = y + 'px';
-                    note.style.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
-                    document.body.appendChild(note);
-                    
-                    setTimeout(() => note.remove(), 3000);
-                }, i * 100);
+        // 重置书本
+        function resetBook() {
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            const book = document.getElementById('book');
+            const instructions = document.getElementById('instructions');
+            const resetBtn = document.getElementById('resetBtn');
+            
+            // 移除翻转动画类
+            book.classList.remove('flip-animation');
+            
+            // 重置状态
+            setTimeout(() => {
+                isFlipped = false;
+                instructions.style.opacity = '0.8';
+                resetBtn.classList.remove('show');
+                isAnimating = false;
+            }, 100);
+        }
+
+        // 事件监听
+        document.getElementById('bookContainer').addEventListener('click', function() {
+            if (!isFlipped) {
+                flipBook();
             }
-        }
-
-        // 动画循环
-        function animate() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            particles = particles.filter(particle => {
-                particle.update();
-                particle.draw();
-                return particle.life > 0;
-            });
-            
-            requestAnimationFrame(animate);
-        }
-
-        // 窗口大小调整
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
         });
 
-        // 启动动画
-        animate();
+        document.getElementById('resetBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            resetBook();
+        });
 
-        // 初始爆炸效果
-        setTimeout(() => {
-            createExplosion(canvas.width / 2, canvas.height / 2);
-        }, 1000);
+        // 初始化
+        createStars();
     </script>
 </body>
 </html>
-
