@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>答案之书 - 寻找你的答案</title>
+    <title>巧匠 - 答案之书</title>
+    <link rel="icon" href="巧匠.ico">
     <style>
         * {
             margin: 0;
@@ -12,61 +13,105 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 40%, #2c5364 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
+        }
+
+        /* Celestial background elements */
+        .celestial-body {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .celestial-body:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .celestial-body:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 70%;
+            right: 15%;
+            animation: float 20s infinite ease-in-out reverse;
+        }
+
+        .celestial-body:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            bottom: 20%;
+            left: 20%;
+            animation: float 18s infinite ease-in-out;
         }
 
         .container {
             text-align: center;
             position: relative;
-        }
-
-        .title {
-            color: white;
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            animation: fadeInDown 1s ease-out;
-        }
-
-        .book-container {
-            position: relative;
-            width: 300px;
-            height: 400px;
-            margin: 0 auto;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .book-container:hover {
-            transform: scale(1.05);
+            z-index: 10;
         }
 
         .book {
-            width: 100%;
-            height: 100%;
+            width: 300px;
+            height: 400px;
             position: relative;
+            cursor: pointer;
             transform-style: preserve-3d;
             transition: transform 0.6s;
+            margin: 0 auto;
+        }
+
+        .book:hover {
+            transform: rotateY(10deg);
+        }
+
+        .book.spinning {
+            animation: spin 1s ease-in-out;
+        }
+
+        @keyframes spin {
+            0% { transform: rotateY(0deg) rotateX(0deg); }
+            25% { transform: rotateY(90deg) rotateX(10deg); }
+            50% { transform: rotateY(180deg) rotateX(0deg); }
+            75% { transform: rotateY(270deg) rotateX(-10deg); }
+            100% { transform: rotateY(360deg) rotateX(0deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-20px) translateX(10px); }
+            50% { transform: translateY(0) translateX(20px); }
+            75% { transform: translateY(20px) translateX(10px); }
         }
 
         .book-cover {
             position: absolute;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, #8B4513, #A0522D);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            backface-visibility: hidden;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         .book-cover::before {
@@ -76,125 +121,96 @@
             left: 20px;
             right: 20px;
             bottom: 20px;
-            border: 2px solid #DAA520;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 5px;
         }
 
-        .book-title {
-            color: #DAA520;
-            font-size: 1.8rem;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            margin-bottom: 1rem;
-        }
-
-        .book-subtitle {
-            color: #F5DEB3;
-            font-size: 1rem;
-            font-style: italic;
-        }
-
-        .book-page {
+        .book-spine {
             position: absolute;
-            width: 100%;
+            left: -20px;
+            top: 0;
+            width: 20px;
             height: 100%;
-            background: #F5F5DC;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            backface-visibility: hidden;
-            transform: rotateY(180deg);
-            padding: 2rem;
+            background: linear-gradient(to right, #0d1c3a 0%, #1e3c72 100%);
+            border-radius: 5px 0 0 5px;
+            box-shadow: -5px 0 10px rgba(0, 0, 0, 0.3);
         }
 
-        .page-header {
-            color: #8B4513;
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            font-weight: bold;
+        .answer-display {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            z-index: 1000;
+            transition: transform 0.5s ease;
+        }
+
+        .answer-display.show {
+            transform: translate(-50%, -50%) scale(1);
         }
 
         .answer-text {
-            color: #2F4F4F;
-            font-size: 1.5rem;
+            font-size: 24px;
+            color: white;
             line-height: 1.6;
-            max-width: 250px;
-            word-wrap: break-word;
+            margin-bottom: 20px;
+            font-weight: 500;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         }
 
-        .page-number {
-            position: absolute;
-            bottom: 20px;
-            right: 30px;
-            color: #8B4513;
-            font-size: 0.9rem;
-        }
-
-        .instructions {
+        .close-btn {
+            background: rgba(255, 255, 255, 0.2);
             color: white;
-            font-size: 1.1rem;
-            margin-top: 2rem;
-            opacity: 0.8;
-            animation: fadeInUp 1s ease-out 0.5s both;
-        }
-
-        .flip-animation {
-            animation: bookFlip 1.5s ease-in-out;
-        }
-
-        @keyframes bookFlip {
-            0% { transform: rotateY(0deg); }
-            50% { transform: rotateY(90deg); }
-            100% { transform: rotateY(180deg); }
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .reset-btn {
-            margin-top: 2rem;
-            padding: 10px 20px;
-            background: rgba(255,255,255,0.2);
-            border: 2px solid white;
-            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 30px;
             border-radius: 25px;
+            font-size: 16px;
             cursor: pointer;
-            font-size: 1rem;
             transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
             opacity: 0;
-            transform: translateY(20px);
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
         }
 
-        .reset-btn.show {
+        .overlay.show {
             opacity: 1;
-            transform: translateY(0);
+            visibility: visible;
         }
 
-        .reset-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.05);
+        .instruction {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+            margin-top: 30px;
+            opacity: 0.9;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
         .stars {
@@ -208,6 +224,8 @@
 
         .star {
             position: absolute;
+            width: 2px;
+            height: 2px;
             background: white;
             border-radius: 50%;
             animation: twinkle 3s infinite;
@@ -220,90 +238,244 @@
     </style>
 </head>
 <body>
+    <div class="celestial-body"></div>
+    <div class="celestial-body"></div>
+    <div class="celestial-body"></div>
+    
     <div class="stars" id="stars"></div>
     
     <div class="container">
-        <h1 class="title">答案之书</h1>
-        
-        <div class="book-container" id="bookContainer">
-            <div class="book" id="book">
-                <div class="book-cover">
-                    <div class="book-title">答案之书</div>
-                    <div class="book-subtitle">Book of Answers</div>
-                </div>
-                <div class="book-page">
-                    <div class="page-header">你的答案是：</div>
-                    <div class="answer-text" id="answerText">点击书本寻找答案</div>
-                    <div class="page-number" id="pageNumber">第1页</div>
-                </div>
+        <div class="book" id="book">
+            <div class="book-spine"></div>
+            <div class="book-cover">
+                <div>答案之书</div>
+                <div style="font-size: 14px; margin-top: 10px; opacity: 0.8;">点击寻找你的答案</div>
             </div>
         </div>
-        
-        <div class="instructions" id="instructions">点击书本获取你的答案</div>
-        <button class="reset-btn" id="resetBtn">再问一次</button>
+        <div class="instruction">点击书本获取你的答案</div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="answer-display" id="answerDisplay">
+        <div class="answer-text" id="answerText"></div>
+        <button class="close-btn" onclick="closeAnswer()">关闭</button>
     </div>
 
     <script>
-        // 答案列表 - 包含各种类型的答案
-        const answers = [
-            "是",
-            "否",
-            "也许",
-            "毫无疑问",
-            "前景不明",
-            "需要等待",
-            "现在不是时候",
-            "绝对可以",
-            "再考虑一下",
-            "相信你的直觉",
-            "时机已到",
-            "保持耐心",
-            "立即行动",
-            "暂缓执行",
-            "会有更好的机会",
-            "这是正确的选择",
-            "需要更多信息",
-            "听从内心的声音",
-            "结果会令你满意",
-            "谨慎行事",
-            "放手去做",
-            "还有未预料的变数",
-            "成功在望",
-            "需要更多努力",
-            "顺其自然",
-            "改变计划",
-            "坚持原计划",
-            "会有贵人相助",
-            "独立思考",
-            "征求他人意见",
-            "这是命中注定的",
-            "创造自己的命运",
-            "相信奇迹",
-            "现实一点",
-            "梦想会实现",
-            "需要更多时间",
-            "很快就会有答案",
-            "不要放弃",
-            "尝试新方法",
-            "保持现状",
-            "突破舒适区"
-        ];
+        // 答案库
+const answers = [
+    "是时候行动了",
+    "相信自己，你是对的",
+    "再等等，时机未到",
+    "毫无疑问",
+    "专注于你的目标",
+    "保持现状",
+    "寻找新的机会",
+    "倾听你内心的声音",
+    "是的，但要有耐心",
+    "不要强迫",
+    "换个角度看问题",
+    "跟随你的直觉",
+    "现在不是好时机",
+    "勇敢前进",
+    "需要更多准备",
+    "结果会让你满意",
+    "保持冷静",
+    "相信过程",
+    "答案就在你心中",
+    "寻求他人帮助",
+    "坚持就是胜利",
+    "放手去做",
+    "谨慎行事",
+    "情况会好转",
+    "不要放弃",
+    "新的可能性会出现",
+    "做最真实的自己",
+    "接受改变",
+    "保持乐观",
+    "相信奇迹",
+    "机会即将到来",
+    "需要更多努力",
+    "顺其自然",
+    "勇敢面对挑战",
+    "保持耐心",
+    "你的想法很重要",
+    "团结就是力量",
+    "享受当下",
+    "未来充满希望",
+    "一切都会好起来",
+    "先解决眼前的问题",
+    "不必急于回应",
+    "你已经知道答案",
+    "让时间说话",
+    "先照顾好自己",
+    "别被情绪左右",
+    "做出选择，不要回头",
+    "信任值得信任的人",
+    "不是所有机会都值得抓住",
+    "先学会放下",
+    "你比你想象的更强",
+    "别忽视细节",
+    "答案会在行动中浮现",
+    "先问清楚自己真正想要什么",
+    "别怕重新开始",
+    "保持诚实",
+    "别让恐惧主导你",
+    "你已经在路上了",
+    "先完成，再完美",
+    "别急着证明自己",
+    "接受不完美的结果",
+    "先听听别人的看法",
+    "你值得更好的",
+    "别被过去束缚",
+    "做出改变永远不晚",
+    "先稳住情绪",
+    "你不需要所有人的认同",
+    "别怕孤独，它让你更清醒",
+    "先想清楚，再行动",
+    "你比你想象的更接近目标",
+    "别让忙碌掩盖了方向",
+    "先承认错误，再谈改变",
+    "你已经在成长了",
+    "别急着解释自己",
+    "做出选择，就要承担",
+    "先学会沉默，再学会表达",
+    "你不需要立刻有答案",
+    "别让期待压垮你",
+    "先接受现实，再谈理想",
+    "你走的每一步都算数",
+    "别怕慢，怕的是停",
+    "跟随内心的节奏",
+    "小步前进也是进步",
+    "给自己一些空间",
+    "信任生命的安排",
+    "简单就是答案",
+    "先放松，再思考",
+    "你的能量需要保护",
+    "别过度分析",
+    "行动会带来 clarity",
+    "有时候休息是最好的选择",
+    "你的价值不需要证明",
+    "让爱指引你",
+    "平衡是关键",
+    "新的开始正在酝酿",
+    "你的努力会被看见",
+    "保持开放的心态",
+    "答案在简单中",
+    "先感恩，再前行",
+    "别比较，走自己的路",
+    "直觉是你的指南针",
+    "小改变带来大不同",
+    "相信自己的判断",
+    "此刻就是最好的时机",
+    "让过去成为老师",
+    "你的独特性是力量",
+    "先行动，答案自现",
+    "保持灵活性",
+    "内心的平静最重要",
+    "别让怀疑阻挡你",
+    "每一步都有意义",
+    "简单行事",
+    "你的存在就是答案",
+    "让事情自然发展",
+    "先整理，再出发",
+    "信任你的能力",
+    "小确幸也很重要",
+    "答案在安静中浮现",
+    "先给予，再收获",
+    "你的直觉很准",
+    "保持初心",
+    "相信时机的安排",
+    "深呼吸，一切都会过去",
+    "你的感受很重要",
+    "慢慢来，比较快",
+    "专注于当下这一刻",
+    "相信自己的节奏",
+    "简单的快乐最真实",
+    "让直觉做决定",
+    "你已经做得很好了",
+    "保持好奇心",
+    "答案就在细节里",
+    "相信自己的选择",
+    "享受这个过程",
+    "你的想法很有价值",
+    "让心静下来",
+    "相信美好的事情",
+    "保持纯真的心",
+    "你值得被爱",
+    "相信自己的力量",
+    "让自然引导你",
+    "简单的答案最深刻",
+    "相信自己的眼光",
+    "保持内心的声音",
+    "你走的路是对的",
+    "相信自己的感觉",
+    "让灵感自然流动",
+    "你的梦想会实现",
+    "相信自己的判断力",
+    "保持真实的自己",
+    "你很有潜力",
+    "相信自己的能力",
+    "让心灵得到休息",
+    "你的努力不会白费",
+    "相信自己的直觉",
+    "保持平衡的生活",
+    "你很有魅力",
+    "让生活充满爱",
+    "你的未来很光明",
+    "相信自己的价值",
+    "让每一天都有意义",
+    // 新增40条数据开始
+    "挑战会让你更强大",
+    "信任你的第六感",
+    "别害怕未知的旅程",
+    "你的潜力超出想象",
+    "先设定目标，再拆解步骤",
+    "让热情驱动你前进",
+    "失败是成功的垫脚石",
+    "别被外界的声音干扰",
+    "你的创造力是无限的",
+    "先照顾好情绪，再处理问题",
+    "保持谦逊，持续学习",
+    "你值得拥有更好的生活",
+    "别让完美主义阻碍你",
+    "信任宇宙的安排",
+    "你的坚持终将有回报",
+    "别害怕表达真实的自己",
+    "让过去成为你的养分",
+    "你的未来由自己创造",
+    "先爱自己，再爱别人",
+    "别让小挫折打倒你",
+    "你的勇气值得称赞",
+    "保持专注，减少干扰",
+    "你的价值不取决于他人",
+    "别害怕寻求帮助",
+    "让生活充满仪式感",
+    "你的成长速度惊人",
+    "先建立自信，再挑战自我",
+    "别让焦虑控制你",
+    "你的内心比你想象中强大",
+    "保持积极，吸引正能量",
+    "你的选择决定你的未来",
+    "别害怕改变，它带来机遇",
+    "让每一天都充满意义",
+    "你的潜力等待被发掘",
+    "先设定边界，再保护自己",
+    "别让拖延阻碍你前进",
+    "你的努力会照亮前路",
+    "保持感恩，吸引更多美好",
+    "你的直觉往往更准确",
+    "别害怕走出舒适区"
+];
 
-        let isFlipped = false;
-        let isAnimating = false;
-
-        // 创建星星背景
+        // 创建星星
         function createStars() {
             const starsContainer = document.getElementById('stars');
-            const numberOfStars = 50;
-            
-            for (let i = 0; i < numberOfStars; i++) {
+            for (let i = 0; i < 50; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
                 star.style.left = Math.random() * 100 + '%';
                 star.style.top = Math.random() * 100 + '%';
-                star.style.width = Math.random() * 3 + 1 + 'px';
-                star.style.height = star.style.width;
                 star.style.animationDelay = Math.random() * 3 + 's';
                 starsContainer.appendChild(star);
             }
@@ -311,78 +483,47 @@
 
         // 获取随机答案
         function getRandomAnswer() {
-            const randomIndex = Math.floor(Math.random() * answers.length);
-            return {
-                text: answers[randomIndex],
-                page: randomIndex + 1
-            };
+            return answers[Math.floor(Math.random() * answers.length)];
         }
 
-        // 翻转书本动画
-        function flipBook() {
-            if (isAnimating) return;
-            
-            isAnimating = true;
+        // 显示答案
+        function showAnswer() {
             const book = document.getElementById('book');
+            const overlay = document.getElementById('overlay');
+            const answerDisplay = document.getElementById('answerDisplay');
             const answerText = document.getElementById('answerText');
-            const pageNumber = document.getElementById('pageNumber');
-            const instructions = document.getElementById('instructions');
-            const resetBtn = document.getElementById('resetBtn');
-            
-            // 添加翻转动画类
-            book.classList.add('flip-animation');
-            
-            // 在动画中间更换内容
+
+            // 添加旋转动画
+            book.classList.add('spinning');
+
+            // 2秒后显示答案
             setTimeout(() => {
-                const answer = getRandomAnswer();
-                answerText.textContent = answer.text;
-                pageNumber.textContent = `第${answer.page}页`;
-            }, 750);
-            
-            // 动画完成后
-            setTimeout(() => {
-                isFlipped = true;
-                instructions.style.opacity = '0';
-                resetBtn.classList.add('show');
-                isAnimating = false;
-            }, 1500);
+                book.classList.remove('spinning');
+                answerText.textContent = getRandomAnswer();
+                overlay.classList.add('show');
+                answerDisplay.classList.add('show');
+            }, 2000);
         }
 
-        // 重置书本
-        function resetBook() {
-            if (isAnimating) return;
+        // 关闭答案
+        function closeAnswer() {
+            const overlay = document.getElementById('overlay');
+            const answerDisplay = document.getElementById('answerDisplay');
             
-            isAnimating = true;
-            const book = document.getElementById('book');
-            const instructions = document.getElementById('instructions');
-            const resetBtn = document.getElementById('resetBtn');
-            
-            // 移除翻转动画类
-            book.classList.remove('flip-animation');
-            
-            // 重置状态
-            setTimeout(() => {
-                isFlipped = false;
-                instructions.style.opacity = '0.8';
-                resetBtn.classList.remove('show');
-                isAnimating = false;
-            }, 100);
+            overlay.classList.remove('show');
+            answerDisplay.classList.remove('show');
         }
-
-        // 事件监听
-        document.getElementById('bookContainer').addEventListener('click', function() {
-            if (!isFlipped) {
-                flipBook();
-            }
-        });
-
-        document.getElementById('resetBtn').addEventListener('click', function(e) {
-            e.stopPropagation();
-            resetBook();
-        });
 
         // 初始化
-        createStars();
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            
+            const book = document.getElementById('book');
+            book.addEventListener('click', showAnswer);
+            
+            // 点击遮罩层也可以关闭
+            document.getElementById('overlay').addEventListener('click', closeAnswer);
+        });
     </script>
 </body>
 </html>
